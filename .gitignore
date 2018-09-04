@@ -6,3 +6,5 @@ client/static
 server/.idea
 server/env
 server/.env
+
+__pycache__/
