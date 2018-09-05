@@ -7,3 +7,6 @@ export class News {
         this.body = body;
     }
 }
+
+
+export const generateNews = () => new News(null, '', '');

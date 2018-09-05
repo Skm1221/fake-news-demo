@@ -1,6 +1,5 @@
+import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
-import {withStyles} from '@material-ui/core/styles';
-import {compose} from 'recompose';
 
 const styles = (theme) => ({
     wrap: {
@@ -9,10 +8,7 @@ const styles = (theme) => ({
     },
 });
 
-@compose(
-    withStyles(styles, { withTheme: true }),
-)
-export class FetchFailed extends React.Component {
+class FetchFailed extends React.Component {
 
     render() {
         const { classes, children } = this.props;
@@ -22,3 +18,5 @@ export class FetchFailed extends React.Component {
     }
 
 }
+
+export default withStyles(styles, { withTheme: true })(FetchFailed);
