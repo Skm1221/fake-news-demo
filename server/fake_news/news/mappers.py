@@ -9,7 +9,6 @@ class NewsMapper:
     def to_json(cls, news: models.News) -> Dict[str, any]:
         return {
             'id': news.news_id,
-            'title': news.title,
+            'headline': news.headline,
             'body': news.body,
-            'slug': news.slug,
         }

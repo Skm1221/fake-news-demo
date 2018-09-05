@@ -7,15 +7,20 @@ from news import models
 from news.mappers import NewsMapper
 
 
-class NewsListView(View):
+class NewNewsInspectionView(View):
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
+        news = get_object_or_404(models.News, pk=1)
         return JsonResponse(
             data={
-                'data': [
-                    NewsMapper.to_json(news)
-                    for news in models.News.objects.all()
-                ]
+                'data': {
+                    'news': NewsMapper.to_json(news),
+                    'unrelated_ratio': 0.1,
+                    'agree_ratio': 0.1,
+                    'disagree_ratio': 0.1,
+                    'discuss_ratio': 0.1,
+                    'inspection': 'unrelated'
+                }
             }
         )
 
@@ -23,12 +28,16 @@ class NewsListView(View):
 class NewsInspectionView(View):
 
     def get(self, request, *args, **kwargs):
-        news = get_object_or_404(models.News, slug=kwargs['slug'])
+        news = get_object_or_404(models.News, pk=kwargs['news_id'])
         return JsonResponse(
             data={
                 'data': {
                     'news': NewsMapper.to_json(news),
-                    'type': 'unrelated'
+                    'unrelated_ratio': 0.1,
+                    'agree_ratio': 0.1,
+                    'disagree_ratio': 0.1,
+                    'discuss_ratio': 0.1,
+                    'inspection': 'unrelated'
                 }
             }
         )
