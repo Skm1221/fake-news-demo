@@ -44,11 +44,26 @@ class ContentArea extends React.Component {
               <Typography variant="title" align="center" color="textSecondary" paragraph>
                 { newsInspection.news.body }
               </Typography>
-            </div> : undefined
+            </div>
+            :
+            undefined
         }
         <div className={classes.heroGrids}>
           <Grid container spacing={32} justify="center">
-            { this.renderGrid(newsInspection) }
+            {
+              newsInspection.news.stance ?
+                <Grid item>
+                  <Typography variant="headline" align="center" color="secondary"  gutterBottom>
+                    Proper Answer
+                  </Typography>
+                  <Typography variant="subheading" align="center" color="secondary" paragraph>
+                    { newsInspection.news.stance }
+                  </Typography>
+                </Grid>
+                :
+                undefined
+            }
+            { this.renderRatioGrid(newsInspection) }
           </Grid>
         </div>
       </div>
@@ -57,7 +72,7 @@ class ContentArea extends React.Component {
 
   capitalizeFirstLetter = (string) => string[0].toUpperCase() + string.slice(1);
 
-  renderGrid = (newsInspection) =>
+  renderRatioGrid = (newsInspection) =>
     ['unrelated', 'agree', 'disagree', 'discuss']
       .map(type => {
         const key = `${type}Ratio`;

@@ -9,13 +9,15 @@ export class NewsMapper {
       json.id,
       json.headline,
       json.body,
+      json.stance
     );
   }
 
   toJson(news) {
     return {
-      headline: news.head,
-      body: news.body
+      headline: news.headline,
+      body: news.body,
+      stance: news.stance
     }
   }
 

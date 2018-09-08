@@ -1,13 +1,14 @@
 import { Theme } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import withStyles from '@material-ui/core/styles/withStyles';
-import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
-import { map } from 'rxjs/operators';
-import { from } from 'rxjs';
 import ContentArea from 'components/content-area';
 import { NewsInspectionMapper } from 'mappers/news-inspection';
-import { ApiProvider } from '../../index.jsx'
+import * as React from 'react';
+import { RouteComponentProps } from 'react-router';
+import { from } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { ApiProvider } from '../../index.jsx';
 
 const axios = require('axios');
 
@@ -50,6 +51,7 @@ class NewsInspectionRoute extends React.Component {
   };
 
   subscription = null;
+  explainSubscription = null;
 
   componentDidMount() {
     this.fetch();
@@ -59,15 +61,20 @@ class NewsInspectionRoute extends React.Component {
     if (this.subscription !== null){
       this.subscription.unsubscribe();
     }
+    if (this.explainSubscription !== null){
+      this.explainSubscription.unsubscribe();
+    }
   }
 
   render() {
     const { classes } = this.props;
-    const { fetchState, newsInspection } = this.state;
-    console.log(fetchState, newsInspection);
     return (
       <div className={ classes.wrap }>
         { this.renderContent() }
+        <div className={ classes.buttons }>
+          <Button onClick={ this.onExplain } > Explain </Button>
+        </div>
+        { this.renderExplain() }
       </div>
     );
   }
@@ -75,7 +82,6 @@ class NewsInspectionRoute extends React.Component {
   renderContent() {
     const { classes } = this.props;
     const { fetchState, newsInspection } = this.state;
-    console.log(fetchState, newsInspection);
     if (fetchState === 'loading') {
       return <CircularProgress
         size={ circleSize }
@@ -91,6 +97,41 @@ class NewsInspectionRoute extends React.Component {
         />
       }
     }
+  };
+
+  renderExplain() {
+    const { classes } = this.props;
+    const { explainFetchState, explanationUrl } = this.state;
+    if (explainFetchState === 'loading') {
+      return <CircularProgress
+        size={ circleSize }
+        className={ classes.progress }
+        color='secondary'
+      />
+    }
+    else if (explainFetchState === 'fetched') {
+      if (explanationUrl !== null) {
+        return <img src={explanationUrl} />
+      }
+    }
+  }
+  onExplain = () => {
+    const { newsId } = this.props;
+    this.setState({explainFetchState: 'loading'});
+    this.explainSubscription =
+      from(ApiProvider.get(`/api/news/${newsId}/inspection/explanation`))
+        .pipe(
+          map(response => response.data.data.url),
+        )
+        .subscribe(
+          explanationUrl => this.setState({
+            explanationUrl: explanationUrl,
+            explainFetchState: 'fetched'
+          }),
+          error => this.setState({
+            explainFetchState: 'fail'
+          })
+        );
   };
 
   fetch() {

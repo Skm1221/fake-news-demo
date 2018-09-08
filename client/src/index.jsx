@@ -5,7 +5,7 @@ import { EntryRoute } from 'routers';
 
 export const ApiProvider = axios.create({
   baseURL: 'http://localhost:9000',
-  timeout: 5000,
+  timeout: 50000,
   headers: {
     'Accept': 'application/json'
   }

@@ -51,13 +51,19 @@ class NewsRoute extends React.Component {
     newsInspection: null,
     fetchState: 'fetched',
     open: false,
+    explanationUrl: '',
+    explainFetchState: 'fetched'
   };
 
   subscription = null;
+  explainSubscription = null;
 
   componentWillUnmount() {
     if (this.subscription !== null){
       this.subscription.unsubscribe();
+    }
+    if (this.explainSubscription !== null){
+      this.explainSubscription.unsubscribe();
     }
   }
 
@@ -93,6 +99,7 @@ class NewsRoute extends React.Component {
             placeholder="body"
           />
           <div className={ classes.buttons }>
+            <Button onClick={ this.onExplain } > Explain </Button>
             <Button onClick={ this.onClick } > Inspect </Button>
           </div>
         </form>
@@ -104,6 +111,7 @@ class NewsRoute extends React.Component {
         />
         <div className={ classes.toolbar }/>
         { this.renderContent() }
+        { this.renderExplain() }
       </div>
     );
   }
@@ -128,6 +136,23 @@ class NewsRoute extends React.Component {
     }
   };
 
+  renderExplain() {
+    const { classes } = this.props;
+    const { explainFetchState, explanationUrl } = this.state;
+    if (explainFetchState === 'loading') {
+      return <CircularProgress
+        size={ circleSize }
+        className={ classes.progress }
+        color='secondary'
+      />
+    }
+    else if (explainFetchState === 'fetched') {
+      if (explanationUrl !== null) {
+        return <img src={explanationUrl} />
+      }
+    }
+  }
+
   onClose = () => {
     this.setState({ open: false });
   };
@@ -136,6 +161,29 @@ class NewsRoute extends React.Component {
     const { news } = this.state;
     news[key] = value;
     this.setState({ news });
+  };
+
+  onExplain = () => {
+    const { news } = this.state;
+    if (!this.validate(news)) {
+      this.setState({ open: true });
+      return ;
+    }
+    this.setState({explainFetchState: 'loading'});
+    this.explainSubscription =
+      from(ApiProvider.post('/api/news/inspection/explanation', new NewsMapper().toJson(news)))
+        .pipe(
+          map(response => response.data.data.url),
+        )
+        .subscribe(
+          explanationUrl => this.setState({
+            explanationUrl: explanationUrl,
+            explainFetchState: 'fetched'
+          }),
+          error => this.setState({
+            explainFetchState: 'fail'
+          })
+        );
   };
 
   onClick = () => {
