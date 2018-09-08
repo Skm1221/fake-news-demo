@@ -7,4 +7,14 @@ server/.idea
 server/env
 server/.env
 
+*.env
+*pkl
+
 __pycache__/
+
+*.zip
+*.h5
+*.pickle
+*.model
+*.csv
+*.npy
