@@ -11,4 +11,5 @@ class NewsMapper:
             'id': news.news_id,
             'headline': news.headline,
             'body': news.body,
+            'stance': news.stance
         }

@@ -119,6 +119,9 @@ class BaseSettings:
 
     STATIC_URL = '/static/'
 
+    MEDIA_URL = '/explanations/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'explanations')
+
 
 class LocalSettings(BaseSettings):
     # Settings for local development
